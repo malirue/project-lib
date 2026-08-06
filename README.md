@@ -1,75 +1,143 @@
-# React + TypeScript + Vite
+# ProjectLib (React + TypeScript + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Архитектура
 
-Currently, two official plugins are available:
+> [!IMPORTANT]
+> Раздел в разработке
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Используемые ресурсы:
 
-## React Compiler
+- https://habr.com/ru/companies/sportmaster_lab/articles/972410/
+- https://habr.com/ru/companies/piter/articles/744824/
+- https://habr.com/ru/companies/otus/articles/835810/
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Общая стуктура папок
 
 ```
+src/
+├── app/
+├── entities/
+├── features/
+├── widgets/
+├── pages/
+├── shared/
+│   ├── ui/
+│   ├── lib/              # вспомогательные утилиты
+│   └── mocks/            # моковые данные
+└── tests
+```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+#### shared
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+> _"«общие примитивы» — кнопка, инпут"_
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+> [!IMPORTANT]
+> shared не зависит ни от чего. Если компоненту нужна логика сущности — это уже не shared.
 
 ```
+shared/    # инфраструктурные примитивы и утилиты
+├── ui           # UI‑примитивы
+├── lib          # чистые функции и утилиты (валидаторы, форматирование, хелперы)
+└── mocks        #  моковые данные (для тестов и Storybook)
+```
+
+Архитектура компонента на примере
+
+```
+shared/ui/Button/
+├── Button.tsx                # реализация, только пропсы и логика отображения
+├── Button.module.scss        # стили (CSS Modules)
+├── Button.stories.tsx        # Storybook
+├── Button.test.tsx           # юнит‑тесты (Vitest)
+└── index.ts                  # реэкспорт
+```
+
+#### entities
+
+> _"«что это?» — пользователь, статья"_
+
+Сущности
+
+- Модели и логика конкретных бизнес‑объектов с идентичностью и смыслом
+- Базовые UI: простые карточки и др.
+
+```
+entities/user/
+├── model/                    # Domain: чистая логика, без UI и без HTTP
+├── api/                      # Infrastructure: адаптеры к внешним источникам HTTP клиент
+├── ui/                       # Presentation: отображение сущности
+│   ├── UserAvatar/
+│   │   ├── UserAvatar.tsx
+│   │   ├── UserAvatar.module.scss
+│   │   ├── UserAvatar.stories.tsx
+│   │   ├── UserAvatar.test.tsx
+│   │   └── index.ts
+│   └── index.ts
+├── index.ts
+└── types.ts                  # публичные типы сущности
+```
+
+#### features
+
+> _действие, приносящее бизнес‑ценность_
+
+Слой отвечает на вопрос «что пользователь хочет сделать?». Это не просто UI, а законченный пользовательский сценарий с бизнес‑логикой: «поставить лайк», «подписаться».
+
+> [!IMPORTANT]
+> features может использовать entities и shared, но не должна знать про другие фичи и страницы.
+
+```
+features/offer-swap/
+├── useOfferSwapButton.ts            # хуки
+├── OfferSwapButton.tsx              # использует shared и/или entities
+├── OfferSwapButton.module.scss
+├── OfferSwapButton.stories.tsx
+├── OfferSwapButton.test.tsx
+└── index.ts                         # публичный API фичи
+```
+
+#### widgets
+
+Композиционные блоки, собирающие сущности и фичи в смысловые куски. Это «кирпичики» страниц. Законченный, независимый функциональный блок
+
+> [!IMPORTANT]
+>
+> - Виджет не должен содержать сложной доменной логики. Он отвечает за композицию и отображение.
+> - Ошибки, загрузка, пустой список — это состояния, которые виджет просто отображает, а не «решает».
+
+```
+widgets/feed/
+├── useFeed.ts    # хук для подготовки данных. Формально - модель
+├── Feed.tsx          # собирает сам виджет. Формально - UI
+├── Feed.module.scss
+├── Feed.stories.tsx
+└── index.ts
+```
+
+#### pages
+
+Страницы как сборка из entities/features
+
+```
+pages/profile/
+├── ProfilePage.tsx
+├── ProfilePage.stories.tsx
+└── index.ts
+```
+
+#### app
+
+Точка входа и глобальная настройка
+Это «обвязка» приложения: провайдеры, роутер, глобальные стили, инициализация.
+
+Что обычно здесь:
+
+- App.tsx — корневой компонент, подключает провайдеры (Redux, Router).
+- store/ — стор.
+- styles/ — глобальные стили (reset, переменные, шрифты).
+
+Компонентов «по смыслу» тут почти нет — это инфраструктурный слой.
+
+#### tests
+
+Тесты
