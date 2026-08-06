@@ -19,8 +19,23 @@
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/shared/ui/*": ["src/shared/ui/*"],
+      "@/shared/lib/*": ["src/shared/lib/*"],
+      "@/entities/*": ["src/entities/*"],
+      "@/features/*": ["src/features/*"],
+      "@/widgets/*": ["src/widgets/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/app/*": ["src/app/*"]
+    },
+
+    /* Silence baseUrl deprecation for TS 6+ */
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src"]
 }
