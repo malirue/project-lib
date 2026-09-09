@@ -11,3 +11,5 @@ export {
 } from "./navigation-menu/navigation-menu";
 export { Input } from "./input/input";
 export { Textarea } from "./textarea/textarea";
+export { Logo } from "./logo/logo";
+export type { LogoProps } from "./logo/logo";
