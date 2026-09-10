@@ -37,5 +37,5 @@
     /* Silence baseUrl deprecation for TS 6+ */
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src"]
+  "include": ["src", "src/global.d.ts"]
 }
