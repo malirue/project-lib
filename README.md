@@ -2,8 +2,7 @@
 
 ## Архитектура
 
-> [!IMPORTANT]
-> Раздел в разработке
+Проект построен по методологии [Feature-Sliced Design](https://feature-sliced.design/ru/).
 
 Используемые ресурсы:
 
@@ -11,21 +10,26 @@
 - https://habr.com/ru/companies/piter/articles/744824/
 - https://habr.com/ru/companies/otus/articles/835810/
 
-### Общая стуктура папок
+### Общая структура папок
 
 ```
 src/
-├── app/
-├── entities/
-├── features/
-├── widgets/
-├── pages/
-├── shared/
-│   ├── ui/
-│   ├── lib/              # вспомогательные утилиты
-│   └── mocks/            # моковые данные
-└── tests
+├── app/          # инициализация приложения, провайдеры, глобальные стили
+├── pages/        # страницы
+├── widgets/      # самостоятельные блоки страницы
+├── features/     # пользовательские сценарии
+├── entities/     # бизнес-сущности
+└── shared/       # переиспользуемый код без бизнес-логики
+    ├── ui/       # UI-примитивы
+    ├── lib/      # вспомогательные утилиты
+    └── mocks/    # моковые данные
 ```
+
+> [!IMPORTANT]
+> Слои импортируют только из слоёв ниже: `app → pages → widgets → features → entities → shared`.
+> Слайсы одного слоя друг о друге не знают: фича не импортирует другую фичу, виджет — другой виджет.
+
+Стили пишутся утилитарными классами Tailwind прямо в разметке, отдельных файлов стилей у компонентов нет.
 
 #### shared
 
@@ -38,18 +42,19 @@ src/
 shared/    # инфраструктурные примитивы и утилиты
 ├── ui           # UI‑примитивы
 ├── lib          # чистые функции и утилиты (валидаторы, форматирование, хелперы)
-└── mocks        #  моковые данные (для тестов и Storybook)
+└── mocks        # моковые данные (для тестов и Storybook)
 ```
 
 Архитектура компонента на примере
 
 ```
-shared/ui/Button/
-├── Button.tsx                # реализация, только пропсы и логика отображения
-├── Button.module.scss        # стили (CSS Modules)
-├── Button.stories.tsx        # Storybook
-├── Button.test.tsx           # юнит‑тесты (Vitest)
-└── index.ts                  # реэкспорт
+shared/ui/
+├── button/
+│   ├── button.tsx            # реализация, только пропсы и логика отображения
+│   ├── button.stories.tsx    # Storybook
+│   ├── button.test.tsx       # юнит‑тесты (Vitest)
+│   └── index.ts              # публичный API компонента
+└── index.ts                  # публичный API сегмента: реэкспорт всех компонентов
 ```
 
 #### entities
@@ -61,20 +66,22 @@ shared/ui/Button/
 - Модели и логика конкретных бизнес‑объектов с идентичностью и смыслом
 - Базовые UI: простые карточки и др.
 
+> [!IMPORTANT]
+> В entities попадают только доменные объекты. UI-примитив без бизнес-смысла (аватар, группа
+> инпутов) живёт в `shared/ui`, даже если пока используется в одном месте.
+
 ```
 entities/user/
 ├── model/                    # Domain: чистая логика, без UI и без HTTP
 ├── api/                      # Infrastructure: адаптеры к внешним источникам HTTP клиент
 ├── ui/                       # Presentation: отображение сущности
-│   ├── UserAvatar/
-│   │   ├── UserAvatar.tsx
-│   │   ├── UserAvatar.module.scss
-│   │   ├── UserAvatar.stories.tsx
-│   │   ├── UserAvatar.test.tsx
-│   │   └── index.ts
-│   └── index.ts
-├── index.ts
-└── types.ts                  # публичные типы сущности
+│   └── user-avatar/
+│       ├── user-avatar.tsx
+│       ├── user-avatar.stories.tsx
+│       ├── user-avatar.test.tsx
+│       └── index.ts
+├── types.ts                  # публичные типы сущности
+└── index.ts                  # публичный API сущности
 ```
 
 #### features
@@ -88,11 +95,14 @@ entities/user/
 
 ```
 features/offer-swap/
-├── useOfferSwapButton.ts            # хуки
-├── OfferSwapButton.tsx              # использует shared и/или entities
-├── OfferSwapButton.module.scss
-├── OfferSwapButton.stories.tsx
-├── OfferSwapButton.test.tsx
+├── model/
+│   └── use-offer-swap.ts            # хуки и логика
+├── ui/
+│   └── offer-swap-button/
+│       ├── offer-swap-button.tsx    # использует shared и/или entities
+│       ├── offer-swap-button.stories.tsx
+│       ├── offer-swap-button.test.tsx
+│       └── index.ts
 └── index.ts                         # публичный API фичи
 ```
 
@@ -103,25 +113,26 @@ features/offer-swap/
 > [!IMPORTANT]
 >
 > - Виджет не должен содержать сложной доменной логики. Он отвечает за композицию и отображение.
-> - Ошибки, загрузка, пустой список — это состояния, которые виджет просто отображает, а не «решает».
+> - Ошибки, загрузка, пустой список — это состояния, которые виджет просто отображает, а не «решает».
 
 ```
 widgets/feed/
-├── useFeed.ts    # хук для подготовки данных. Формально - модель
-├── Feed.tsx          # собирает сам виджет. Формально - UI
-├── Feed.module.scss
-├── Feed.stories.tsx
+├── use-feed.ts       # хук для подготовки данных. Формально - модель
+├── feed.tsx          # собирает сам виджет. Формально - UI
+├── feed.stories.tsx
 └── index.ts
 ```
 
+Когда файлов становится больше, они раскладываются по сегментам `ui/`, `model/`, `lib/`, как в features.
+
 #### pages
 
-Страницы как сборка из entities/features
+Страницы как сборка из widgets/features/entities
 
 ```
 pages/profile/
-├── ProfilePage.tsx
-├── ProfilePage.stories.tsx
+├── profile-page.tsx
+├── profile-page.stories.tsx
 └── index.ts
 ```
 
@@ -132,12 +143,100 @@ pages/profile/
 
 Что обычно здесь:
 
-- App.tsx — корневой компонент, подключает провайдеры (Redux, Router).
+- app.tsx — корневой компонент, подключает провайдеры (Redux, Router).
 - store/ — стор.
 - styles/ — глобальные стили (reset, переменные, шрифты).
 
-Компонентов «по смыслу» тут почти нет — это инфраструктурный слой.
+Компонентов «по смыслу» тут почти нет — это инфраструктурный слой.
 
-#### tests
+## Конвенции
 
-Тесты
+### Именование
+
+| Что                               | Правило                                                  | Пример                                    |
+| --------------------------------- | -------------------------------------------------------- | ----------------------------------------- |
+| Папки слоёв, слайсов, компонентов | kebab-case                                               | `widgets/header/`, `features/offer-swap/` |
+| Файл компонента                   | kebab-case, совпадает с именем папки                     | `header/header.tsx`                       |
+| Story / тест                      | `<имя>.stories.tsx` / `<имя>.test.tsx`, всегда `.tsx`    | `header.stories.tsx`                      |
+| Хук                               | файл `use-<имя>.ts`, функция `use<Имя>`                  | `use-feed.ts` → `useFeed`                 |
+| Типы и утилиты                    | kebab-case                                               | `types.ts`, `format-date.ts`              |
+| Компонент в коде                  | PascalCase, именованный `export function`, без `default` | `export function Header()`                |
+| Тип пропсов                       | `<Имя>Props`, экспортируется вместе с компонентом        | `LogoProps`                               |
+| Варианты `cva`                    | `<имя>Variants`                                          | `buttonVariants`                          |
+| Атрибут `data-slot`               | kebab-case имени компонента                              | `data-slot="input-group"`                 |
+| `title` в Storybook               | повторяет путь к компоненту в нижнем регистре            | `"shared/ui/logo"`, `"widgets/header"`    |
+
+### Импорты и публичный API
+
+- У каждого компонента и слайса есть `index.ts` — его публичный API.
+- Снаружи слайса импортируем только через публичный API: `import { Button } from "@/shared/ui"`,
+  `import { Header } from "@/widgets/header"`. Импорт по внутреннему пути
+  (`@/shared/ui/button/button`) запрещён.
+- Внутри слайса импорты относительные.
+- Компоненты `shared/ui` импортируют друг друга относительно (`import { Button } from "../button"`),
+  а не через `@/shared/ui`, — иначе появляются циклические зависимости через баррел.
+- Компонент, добавленный через `npx shadcn@latest add <name>`, появляется плоским файлом
+  `shared/ui/<name>.tsx`. Его нужно перенести в папку `shared/ui/<name>/`, создать рядом `index.ts`,
+  добавить реэкспорт в `shared/ui/index.ts` и заменить импорты `@/shared/...` внутри файла на
+  относительные.
+
+### Ветки
+
+Используем **GitHub Flow**:
+
+- `main` — всегда рабочее состояние. Каждая задача делается в отдельной короткой ветке от `main`
+  и возвращается в неё через Pull Request.
+- Имя ветки: `<type>/<описание>` — латиницей, kebab-case, 2–5 слов. `type` берётся из списка
+  типов коммитов ниже.
+- После мерджа ветка удаляется.
+
+```
+feat/add-header
+fix/logo-hover
+refactor/move-avatar-to-shared
+chore/setup-storybook
+docs/conventions
+```
+
+### Коммиты
+
+Используем [Conventional Commits](https://www.conventionalcommits.org/ru/v1.0.0/):
+
+```
+<type>(<scope>): <описание>
+```
+
+- `type` и `scope` — латиницей, `описание` — по-русски.
+- Описание — со строчной буквы, без точки в конце, в **безличной форме прошедшего времени**:
+  «добавлен», «исправлена», «удалены».
+- `scope` необязателен: имя слайса или компонента (`header`, `button`, `readme`). Опускаем, если
+  изменение затрагивает проект целиком.
+- Один коммит — одно логическое изменение. Если в описании хочется перечислить несколько вещей
+  через запятую, это несколько коммитов.
+
+| Тип        | Когда                                                   |
+| ---------- | ------------------------------------------------------- |
+| `feat`     | новая функциональность для пользователя                 |
+| `fix`      | исправление ошибки                                      |
+| `refactor` | изменение кода без изменения поведения                  |
+| `style`    | форматирование, без изменения логики                    |
+| `docs`     | документация                                            |
+| `test`     | тесты                                                   |
+| `build`    | зависимости и сборка (установка и обновление пакетов)   |
+| `ci`       | настройка CI                                            |
+| `perf`     | оптимизация производительности                          |
+| `chore`    | прочее обслуживание: конфиги линтеров, хуков, редактора |
+
+Примеры:
+
+```
+✅ feat(logo): добавлена анимация уголков при наведении
+✅ fix(header): исправлен отступ навигации на мобильных
+✅ build: установлен storybook
+✅ docs(readme): описаны конвенции проекта
+
+❌ feat: установка storybook          — установка пакета это build, и форма не та
+❌ chore: Установлен Tailwind         — описание с заглавной буквы
+❌ feat: добавила компоненты для хедера (textarea, input, avatar)
+                                      — личная форма и несколько изменений в одном коммите
+```

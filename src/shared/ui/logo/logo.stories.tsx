@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Logo } from "./logo";
 
 const meta: Meta<typeof Logo> = {
-  title: "shared/ui/Logo",
+  title: "shared/ui/logo",
   component: Logo,
   tags: ["autodocs"],
   argTypes: {

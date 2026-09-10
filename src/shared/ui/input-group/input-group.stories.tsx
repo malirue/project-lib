@@ -19,7 +19,7 @@ import {
 import { useState } from "react";
 
 const meta: Meta<typeof InputGroup> = {
-  title: "entities/ui/input-group",
+  title: "shared/ui/input-group",
   component: InputGroup,
   parameters: {
     layout: "centered",

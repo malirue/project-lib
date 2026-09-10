@@ -1,4 +1,4 @@
-import "./App.css";
+import "./app.css";
 import { Button } from "@/shared/ui";
 
 export function App() {

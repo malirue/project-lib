@@ -1,4 +1,4 @@
-export { Button } from "./button/button";
+export { Button } from "./button";
 export {
   NavigationMenu,
   NavigationMenuList,
@@ -8,8 +8,24 @@ export {
   NavigationMenuPositioner,
   NavigationMenuLink,
   NavigationMenuIndicator,
-} from "./navigation-menu/navigation-menu";
-export { Input } from "./input/input";
-export { Textarea } from "./textarea/textarea";
-export { Logo } from "./logo/logo";
-export type { LogoProps } from "./logo/logo";
+} from "./navigation-menu";
+export { Input } from "./input";
+export { Textarea } from "./textarea";
+export { Logo } from "./logo";
+export type { LogoProps } from "./logo";
+export {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarBadge,
+} from "./avatar";
+export {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupText,
+  InputGroupInput,
+  InputGroupTextarea,
+} from "./input-group";
