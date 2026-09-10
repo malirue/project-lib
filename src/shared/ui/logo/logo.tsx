@@ -5,18 +5,27 @@ import { cn } from "../../lib/cn";
 const logoVariants = cva(
   [
     "group/logo relative inline-flex items-center font-medium tracking-tight whitespace-nowrap select-none",
-    // Цвета вынесены в переменные, чтобы их можно было переопределить снаружи —
-    // как утилитой в className, так и вариантом dark:.
+    // Цвета
     "[--logo-corner-color:var(--color-foreground)] [--logo-accent-color:var(--color-primary)]",
     "text-[color:var(--color-foreground)]",
-    // Уголок сверху слева.
+    // Уголок сверху слева
     "before:absolute before:top-0 before:left-0 before:content-['']",
     "before:size-[var(--logo-corner-size)] before:border-t-2 before:border-l-2",
     "before:border-[color:var(--logo-corner-color)]",
-    // Уголок снизу справа.
+    // Уголок снизу справа
     "after:absolute after:right-0 after:bottom-0 after:content-['']",
     "after:size-[var(--logo-corner-size)] after:border-r-2 after:border-b-2",
     "after:border-[color:var(--logo-corner-color)]",
+    // Анимация уголков
+    "before:transition-transform before:duration-200 before:ease-out",
+    "after:transition-transform after:duration-200 after:ease-out",
+    "motion-reduce:before:transition-none motion-reduce:after:transition-none",
+    // Hover
+    "hover:before:-translate-x-1 hover:before:-translate-y-0.5 hover:before:scale-115",
+    "hover:after:translate-x-1 hover:after:translate-y-0.5 hover:after:scale-115",
+    // Active: уголки мгновенно возвращаются в исходное положение и держатся, пока кнопка зажата
+    "active:before:translate-0 active:before:scale-100 active:before:duration-100",
+    "active:after:translate-0 active:after:scale-100 active:after:duration-100",
   ],
   {
     variants: {
