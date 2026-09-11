@@ -1123,6 +1123,13 @@
     tmcp "^1.19.4"
     valibot "1.2.0"
 
+"@storybook/addon-themes@~10.5.5":
+  version "10.5.10"
+  resolved "https://registry.yarnpkg.com/@storybook/addon-themes/-/addon-themes-10.5.10.tgz#c0fe930fc87ad57a45e7e545c02222d73b4f8745"
+  integrity sha512-XNTjmIBwJ0TUcIV11STGY6hcynCy6imgYCDZeDaDyNEQsCoYAlY25fYvWNfrz5jOu1MGACiaA/E0ypk03whDdQ==
+  dependencies:
+    ts-dedent "^2.0.0"
+
 "@storybook/addon-vitest@^10.5.5":
   version "10.5.5"
   resolved "https://registry.yarnpkg.com/@storybook/addon-vitest/-/addon-vitest-10.5.5.tgz#e11dd8e258abbe52d01146dfa1f635cbb17b229c"
