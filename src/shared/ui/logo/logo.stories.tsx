@@ -41,10 +41,13 @@ export const CustomColors: Story = {
   ),
 };
 
-/** На тёмном фоне цвета берутся из токенов темы — уголки и «Lib» инвертируются вместе с ней. */
-export const OnDark: Story = {
+/**
+ * Уголки можно приглушить только в тёмной теме — переключите тему в тулбаре,
+ * чтобы увидеть разницу между обычным логотипом и приглушённым.
+ */
+export const MutedCornersInDark: Story = {
   render: () => (
-    <div className="dark flex items-center gap-6 rounded-lg bg-background p-8">
+    <div className="flex items-center gap-6">
       <Logo />
       <Logo className="dark:[--logo-corner-color:var(--color-muted-foreground)]" />
     </div>
