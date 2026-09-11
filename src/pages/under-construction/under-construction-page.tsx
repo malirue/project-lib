@@ -36,7 +36,7 @@ export function UnderConstructionPage() {
   return (
     <main className="mx-auto flex w-full max-w-[var(--content-width)] flex-1 flex-col gap-16 px-6 pb-20 md:gap-24">
       <section className="mx-auto flex max-w-3xl flex-col items-center gap-6">
-        <h1 className="text-balance">
+        <h1 className="text-balance text-3xl md:text-4xl lg:text-5xl leading-tight bg-gradient-to-r from-brand/90 to-brand-2/80 bg-clip-text text-transparent py-1">
           ProjectLib — библиотека проектов, у которых есть история
         </h1>
         <p className="text-pretty text-muted-foreground">
@@ -81,11 +81,9 @@ export function UnderConstructionPage() {
           {sections.map(({ title, text }) => (
             <li
               key={title}
-              className="flex flex-col gap-2 rounded-lg border p-6"
+              className="flex flex-col gap-2 rounded-lg border p-6 border-brand/90"
             >
-              <h3 className="text-lg font-medium text-[color:var(--text-h)]">
-                {title}
-              </h3>
+              <h3 className="text-lg font-medium">{title}</h3>
               <p className="text-pretty text-sm text-muted-foreground">
                 {text}
               </p>
@@ -98,11 +96,8 @@ export function UnderConstructionPage() {
         <h2>Над чем работаю сейчас</h2>
         <ul className="flex list-none flex-col gap-4 p-0">
           {roadmap.map(({ title, text }) => (
-            <li key={title} className="border-l-2 pl-4">
-              <span className="font-medium text-[color:var(--text-h)]">
-                {title}
-              </span>{" "}
-              — {text}
+            <li key={title} className="border-l-2 border-brand/90 pl-4">
+              <span className="font-medium">{title}</span> — {text}
             </li>
           ))}
         </ul>
