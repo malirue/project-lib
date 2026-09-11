@@ -1,12 +1,13 @@
-import "./app.css";
-import { Button } from "@/shared/ui";
+import { Header } from "@/widgets/header";
+import { Footer } from "@/widgets/footer";
+import { UnderConstructionPage } from "@/pages/under-construction";
 
 export function App() {
   return (
     <>
-      <section id="center">
-        <Button>Тест</Button>
-      </section>
+      <Header showNavigation={false} />
+      <UnderConstructionPage />
+      <Footer />
     </>
   );
 }
