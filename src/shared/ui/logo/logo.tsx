@@ -6,7 +6,7 @@ const logoVariants = cva(
   [
     "group/logo relative inline-flex items-center font-medium tracking-tight whitespace-nowrap select-none",
     // Цвета
-    "[--logo-corner-color:var(--color-foreground)] [--logo-accent-color:var(--color-primary)]",
+    "[--logo-corner-color:var(--color-brand)] [--logo-accent-color:var(--color-brand)]",
     "text-[color:var(--color-foreground)]",
     // Уголок сверху слева
     "before:absolute before:top-0 before:left-0 before:content-['']",
