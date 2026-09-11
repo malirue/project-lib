@@ -14,3 +14,10 @@ export default meta;
 type Story = StoryObj<typeof Header>;
 
 export const Default: Story = {};
+
+/** Только логотип — для страниц, с которых ещё некуда вести. */
+export const WithoutNavigation: Story = {
+  args: {
+    showNavigation: false,
+  },
+};
