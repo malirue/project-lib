@@ -1,5 +1,14 @@
 # ProjectLib (React + TypeScript + Vite)
 
+## Деплой
+
+Приложение опубликовано на GitHub Pages: **https://malirue.github.io/project-lib/**
+
+Публикация автоматическая — workflow `.github/workflows/deploy.yml` собирает проект и выкладывает
+его при каждом push в `main` (то есть при мерже PR).
+
+Опубликовано только приложение (`yarn build` → `dist`). Storybook остаётся локальным инструментом.
+
 ## Архитектура
 
 Проект построен по методологии [Feature-Sliced Design](https://feature-sliced.design/ru/).
