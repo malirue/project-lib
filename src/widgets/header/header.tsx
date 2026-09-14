@@ -15,7 +15,11 @@ export function Header({ showNavigation = true }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full bg-background">
       <div className="mx-auto flex h-[var(--header-height)] w-full max-w-[var(--content-width)] items-center gap-8 px-6">
-        <a href="/" aria-label="ProjectLib — на главную" className="shrink-0">
+        <a
+          href={import.meta.env.BASE_URL}
+          aria-label="ProjectLib — на главную"
+          className="shrink-0"
+        >
           <Logo />
         </a>
         {showNavigation && (
@@ -23,7 +27,7 @@ export function Header({ showNavigation = true }: HeaderProps) {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/"
+                  href={import.meta.env.BASE_URL}
                   className="text-sm font-medium hover:text-primary"
                 >
                   Блог
@@ -31,7 +35,7 @@ export function Header({ showNavigation = true }: HeaderProps) {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/about"
+                  href={`${import.meta.env.BASE_URL}about`}
                   className="text-sm font-medium hover:text-primary"
                 >
                   Проекты
@@ -39,7 +43,7 @@ export function Header({ showNavigation = true }: HeaderProps) {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink
-                  href="/services"
+                  href={`${import.meta.env.BASE_URL}services`}
                   className="text-sm font-medium hover:text-primary"
                 >
                   О нас
